@@ -98,4 +98,66 @@ RSpec.describe "Cats", type: :request do
       expect(cats).to be_empty
     end
   end
+
+  describe "cannot create a cat without valid attributes" do 
+    it "doesn't create a cat without a name" do 
+      cat_params = {
+        cat: {
+          age: 45,
+          enjoys: 'lasagne',
+          image: 'https://live.staticflickr.com/7374/27659345390_feda639960_b.jpg'
+        }
+      }
+      post '/cats', params: cat_params 
+      expect(response.status).to eq 422
+
+      cat = JSON.parse(response.body)
+      expect(cat['name']).to include "can't be blank"
+    end
+
+    it "doesn't create a cat without an age" do 
+      cat_params = {
+        cat: {
+          name: 'Garfield',
+          enjoys: 'lasagne',
+          image: 'https://live.staticflickr.com/7374/27659345390_feda639960_b.jpg'
+        }
+      }
+
+      post '/cats', params: cat_params 
+      expect(response.status).to eq 422
+      cat = JSON.parse(response.body)
+      expect(cat['age']).to include "can't be blank"
+    end
+
+    it "doesn't create a cat without an enjoys" do 
+      cat_params = {
+        cat: {
+          name: 'Garfield',
+          age: 45,
+          image: 'https://live.staticflickr.com/7374/27659345390_feda639960_b.jpg'
+        }
+      }
+
+      post '/cats', params: cat_params 
+      expect(response.status).to eq 422
+      cat = JSON.parse(response.body)
+      expect(cat['enjoys']).to include "can't be blank"
+    end
+
+    it "doesn't create a cat without an image" do 
+      cat_params = {
+        cat: {
+          name: 'Garfield',
+          age: 45,
+          enjoys: 'lasagne'
+        }
+      }
+
+      post '/cats', params: cat_params 
+      expect(response.status).to eq 422
+      cat = JSON.parse(response.body)
+      expect(cat['image']).to include "can't be blank"
+    end
+  end
 end
